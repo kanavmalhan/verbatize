@@ -1,0 +1,26 @@
+[0.00-6.00] Speaker_0: Welcome to a role play. I will be the judge. Before you begin speaking, remember to shake your judge's hand.
+[8.00-10.00] Speaker_1: Hello, how are you doing today? I'm great, how are you?
+[10.00-14.00] Speaker_3: Dan McMullen, good to see you. Nice to see you, have a seat. Thank you.
+[17.00-22.00] Speaker_5: First thing you want to do after you've sat down is make sure you make eye contact with your judge
+[22.00-27.00] Speaker_5: and wait for them to either prompt you to start talking or if they don't say anything you can begin
+[27.00-32.00] Speaker_5: by going over the competencies that are going to be evaluated and for this role play
+[32.00-36.00] Speaker_5: those are going to be handling telephone calls in a business like manner,
+[36.00-40.00] Speaker_5: explaining the nature of effective verbal communications,
+[40.00-43.00] Speaker_5: employing communication styles appropriate to the target audience
+[43.00-46.00] Speaker_5: and reinforcing service orientation through communication.
+[46.00-51.00] Speaker_5: These competencies are given to you 10 minutes before your role play
+[51.00-54.00] Speaker_5: and you have 10 minutes to prepare, you'll be given a blank sheet of paper
+[54.00-59.00] Speaker_5: you can write as much as you'd like on it and then you're going to go in and present to your judge.
+[59.00-63.00] Speaker_5: When you're done presenting the judge will ask you questions which we're now going to demonstrate.
+[63.00-68.00] Speaker_4: So, what are some of the reasons why customers would call a business like the powerhouse?
+[68.00-72.00] Speaker_5: Some of the reasons a customer may call a business like the powerhouse would be to
+[72.00-77.00] Speaker_5: have questions about the store hours, questions about employment opportunities
+[77.00-82.00] Speaker_5: and also questions about the stock that the store carries or any general electronics questions.
+[82.00-86.00] Speaker_5: Answering questions, you want to make sure that you continue to keep eye contact
+[86.00-88.00] Speaker_5: and don't look down at your paper too much.
+[88.00-90.00] Speaker_5: You don't want to be reading from the paper,
+[90.00-94.00] Speaker_5: but you want to be explaining what you've written down to the judge.
+[94.00-97.00] Speaker_4: Great, that's all I have for you. Thank you so much.
+[97.00-100.00] Speaker_5: When you finish, make sure you shake the hands of the judge
+[100.00-101.00] Speaker_7: and tell them to have a good day.
+[101.00-103.00] Speaker_6: Have a great day.
