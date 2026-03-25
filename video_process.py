@@ -2,6 +2,7 @@ import cv2
 import json
 import pickle
 import numpy as np
+import torch
 from collections import defaultdict
 from ultralytics import YOLO
 
@@ -30,7 +31,15 @@ def iou(boxA, boxB):
 # YOLOv8 + ByteTrack
 # ------------------------
 
-def run_bytetrack(video_path, yolo_model="yolov8n-face.pt"):
+def run_bytetrack(video_path, yolo_model="yolov8n-face.pt", device: str = None):
+    """Run YOLOv8 + ByteTrack on a video.
+
+    device: 'cuda' or 'cpu' or a specific torch device string. If None, auto-select.
+    """
+    if device is None:
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+
+    # Load model (Ultralytics YOLO). The tracker/detector will use the selected device.
     model = YOLO(yolo_model)
 
     tracks = defaultdict(list)
@@ -41,15 +50,20 @@ def run_bytetrack(video_path, yolo_model="yolov8n-face.pt"):
         persist=True,
         conf=0.3,
         iou=0.5,
-        stream=True
+        stream=True,
+        device=device,
     )
 
     for frame_idx, r in enumerate(results):
-        if r.boxes.id is None:
+        # r.boxes may be empty or have no ids
+        if getattr(r.boxes, "id", None) is None:
             continue
 
-        for box, tid in zip(r.boxes.xyxy.cpu().numpy(),
-                            r.boxes.id.cpu().numpy()):
+        # Ensure tensors are moved to CPU before converting to numpy
+        xyxy = r.boxes.xyxy.cpu().numpy() if hasattr(r.boxes.xyxy, "cpu") else r.boxes.xyxy
+        ids = r.boxes.id.cpu().numpy() if hasattr(r.boxes.id, "cpu") else r.boxes.id
+
+        for box, tid in zip(xyxy, ids):
             tracks[frame_idx].append({
                 "track_id": int(tid),
                 "bbox": box.tolist()

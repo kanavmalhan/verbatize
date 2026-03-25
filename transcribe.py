@@ -6,8 +6,8 @@ SEGMENTS_JSON = "speaker_segments.json"
 AUDIO_FILE = "demo/002/pyavi/audio.wav"
 OUTPUT_TXT = "final_transcript.txt"
 
-WHISPER_MODEL = "medium"   # 🔥 better accuracy
-DEVICE = "cpu"
+WHISPER_MODEL = "base"   # 🔥 better accuracy
+DEVICE = "cuda"
 COMPUTE_TYPE = "float32"   # 🔥 better accuracy
 
 # -------------------------

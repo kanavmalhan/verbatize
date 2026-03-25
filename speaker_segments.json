@@ -4,15 +4,15 @@
     "segments": [
       {
         "start": 0.32,
-        "end": 5.68,
-        "confidence": 4.0
+        "end": 5.72,
+        "confidence": 4.099999904632568
       },
       {
-        "start": 63.56,
+        "start": 63.52,
         "end": 64.88,
-        "confidence": 3.0999999046325684
+        "confidence": 3.200000047683716
       },
-      { 
+      {
         "start": 65.96,
         "end": 68.08,
         "confidence": 3.5
@@ -37,15 +37,15 @@
         "end": 73.64,
         "confidence": 3.799999952316284
       },
-      { 
+      {
         "start": 74.08,
         "end": 81.6,
-        "confidence": 4.0
+        "confidence": 3.9000000953674316
       },
       {
         "start": 82.8,
         "end": 84.2,
-        "confidence": 3.799999952316284
+        "confidence": 3.9000000953674316
       }
     ]
   }
