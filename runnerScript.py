@@ -43,9 +43,9 @@ def main():
     if not video_path.exists():
         raise FileNotFoundError(f"Video not found: {video_path}")
 
-    run_step("demo.py", args.videoName, args.videoFolder)
-    run_step("video_process.py", args.videoName, args.videoFolder)
-    run_step("transcribe.py", args.videoName, args.videoFolder)
+    subprocess.run([sys.executable, "demo.py", "--videoName", args.videoName], check=True)
+    subprocess.run([sys.executable, "video_process.py", "--videoName", args.videoName], check=True)
+    subprocess.run([sys.executable, "transcribe.py", "--videoName", args.videoName], check=True)
 
     print(f"[DONE] Pipeline complete for videoName={args.videoName}")
 
