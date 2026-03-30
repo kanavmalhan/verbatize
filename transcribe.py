@@ -6,9 +6,9 @@ SEGMENTS_JSON = "speaker_segments.json"
 AUDIO_FILE = "demo/002/pyavi/audio.wav"
 OUTPUT_TXT = "final_transcript.txt"
 
-WHISPER_MODEL = "base"   # 🔥 better accuracy
+WHISPER_MODEL = "large-v2"  # much better accuracy, ~3.5GB VRAM on GPU
 DEVICE = "cuda"
-COMPUTE_TYPE = "float32"   # 🔥 better accuracy
+COMPUTE_TYPE = "float16"    # faster on T4, lower VRAM than float32
 
 # -------------------------
 # Load speaker segments
@@ -28,7 +28,7 @@ for person in speaker_data:
 # -------------------------
 # Load Whisper
 # -------------------------
-print("[INFO] Loading Whisper model...")
+print("[INFO] Loading Whisper large-v2 model...")
 model = WhisperModel(
     WHISPER_MODEL,
     device=DEVICE,
@@ -38,8 +38,8 @@ model = WhisperModel(
 print("[INFO] Transcribing audio...")
 whisper_segments, _ = model.transcribe(
     AUDIO_FILE,
-    vad_filter=True,          # 🔥 improves segmentation
-    beam_size=5               # 🔥 improves accuracy
+    vad_filter=True,
+    beam_size=5
 )
 
 # -------------------------

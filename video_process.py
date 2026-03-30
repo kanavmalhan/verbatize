@@ -28,18 +28,14 @@ def iou(boxA, boxB):
 
 
 # ------------------------
-# YOLOv8 + ByteTrack
+# YOLOv8l + ByteTrack
 # ------------------------
 
 def run_bytetrack(video_path, yolo_model="yolov8n-face.pt", device: str = None):
-    """Run YOLOv8 + ByteTrack on a video.
-
-    device: 'cuda' or 'cpu' or a specific torch device string. If None, auto-select.
-    """
+    """Run YOLOv8l + ByteTrack on a video. Uses large face model for better detection."""
     if device is None:
         device = "cuda" if torch.cuda.is_available() else "cpu"
 
-    # Load model (Ultralytics YOLO). The tracker/detector will use the selected device.
     model = YOLO(yolo_model)
 
     tracks = defaultdict(list)
@@ -55,11 +51,9 @@ def run_bytetrack(video_path, yolo_model="yolov8n-face.pt", device: str = None):
     )
 
     for frame_idx, r in enumerate(results):
-        # r.boxes may be empty or have no ids
         if getattr(r.boxes, "id", None) is None:
             continue
 
-        # Ensure tensors are moved to CPU before converting to numpy
         xyxy = r.boxes.xyxy.cpu().numpy() if hasattr(r.boxes.xyxy, "cpu") else r.boxes.xyxy
         ids = r.boxes.id.cpu().numpy() if hasattr(r.boxes.id, "cpu") else r.boxes.id
 
@@ -202,7 +196,7 @@ def main():
     PYWORK_PATH = "demo/002/pywork"
     OUTPUT_JSON = "speaker_segments.json"
 
-    print("[1] Running YOLOv8 + ByteTrack...")
+    print("[1] Running YOLOv8l + ByteTrack...")
     bytetrack_tracks = run_bytetrack(VIDEO_PATH)
 
     print("[2] Loading TalkNet outputs...")
