@@ -47,4 +47,3 @@ class lossV(nn.Module):
 		x = self.FC(x)
 		nloss = self.criterion(x, labels)
 		return nloss
-
