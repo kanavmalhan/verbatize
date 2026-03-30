@@ -1,9 +1,12 @@
-import cv2
+import argparse
 import json
+import os
 import pickle
-import numpy as np
-import torch
 from collections import defaultdict
+from pathlib import Path
+
+import cv2
+import torch
 from ultralytics import YOLO
 
 FPS = 25
@@ -31,8 +34,8 @@ def iou(boxA, boxB):
 # YOLOv8l + ByteTrack
 # ------------------------
 
-def run_bytetrack(video_path, yolo_model="yolov8n-face.pt", device: str = None):
-    """Run YOLOv8l + ByteTrack on a video. Uses large face model for better detection."""
+def run_bytetrack(video_path, yolo_model="yolov8n-face.pt", device=None):
+    """Run YOLO + ByteTrack on a video."""
     if device is None:
         device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -71,8 +74,10 @@ def run_bytetrack(video_path, yolo_model="yolov8n-face.pt", device: str = None):
 # ------------------------
 
 def load_talknet(pywork_path):
-    tracks = pickle.load(open(f"{pywork_path}/tracks.pckl", "rb"))
-    scores = pickle.load(open(f"{pywork_path}/scores.pckl", "rb"))
+    with open(os.path.join(pywork_path, "tracks.pckl"), "rb") as track_file:
+        tracks = pickle.load(track_file)
+    with open(os.path.join(pywork_path, "scores.pckl"), "rb") as score_file:
+        scores = pickle.load(score_file)
     return tracks, scores
 
 
@@ -191,16 +196,85 @@ def build_segments(frame_events):
 # Main
 # ------------------------
 
-def main():
-    VIDEO_PATH = "demo/002.mp4"
-    PYWORK_PATH = "demo/002/pywork"
-    OUTPUT_JSON = "speaker_segments.json"
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="Fuse TalkNet outputs with ByteTrack detections."
+    )
+    parser.add_argument(
+        "--videoName",
+        type=str,
+        required=True,
+        help="Video name without extension, for example 003",
+    )
+    parser.add_argument(
+        "--videoFolder",
+        type=str,
+        default="demo",
+        help="Base folder containing the source videos and TalkNet outputs.",
+    )
+    parser.add_argument(
+        "--videoPath",
+        type=str,
+        default=None,
+        help="Optional explicit path to the source video file.",
+    )
+    parser.add_argument(
+        "--pyworkPath",
+        type=str,
+        default=None,
+        help="Optional explicit path to the TalkNet pywork directory.",
+    )
+    parser.add_argument(
+        "--outputJson",
+        type=str,
+        default=None,
+        help="Optional explicit path for the speaker segments JSON.",
+    )
+    parser.add_argument(
+        "--yoloModel",
+        type=str,
+        default="yolov8n-face.pt",
+        help="YOLO face model path.",
+    )
+    parser.add_argument(
+        "--device",
+        type=str,
+        default=None,
+        help="Inference device override, for example cuda or cpu.",
+    )
+    return parser.parse_args()
 
-    print("[1] Running YOLOv8l + ByteTrack...")
-    bytetrack_tracks = run_bytetrack(VIDEO_PATH)
+
+def resolve_defaults(args):
+    video_root = Path(args.videoFolder)
+    save_root = video_root / args.videoName
+
+    video_path = Path(args.videoPath) if args.videoPath else video_root / f"{args.videoName}.mp4"
+    pywork_path = Path(args.pyworkPath) if args.pyworkPath else save_root / "pywork"
+    output_json = Path(args.outputJson) if args.outputJson else save_root / "speaker_segments.json"
+
+    return video_path, pywork_path, output_json
+
+def main():
+    args = parse_args()
+    VIDEO_PATH, PYWORK_PATH, OUTPUT_JSON = resolve_defaults(args)
+
+    if not VIDEO_PATH.exists():
+        raise FileNotFoundError(f"Video not found: {VIDEO_PATH}")
+    if not PYWORK_PATH.exists():
+        raise FileNotFoundError(f"TalkNet output folder not found: {PYWORK_PATH}")
+
+    OUTPUT_JSON.parent.mkdir(parents=True, exist_ok=True)
+
+    print("[1] Running YOLO + ByteTrack...")
+    bytetrack_tracks = run_bytetrack(
+        str(VIDEO_PATH),
+        yolo_model=args.yoloModel,
+        device=args.device,
+    )
 
     print("[2] Loading TalkNet outputs...")
-    talknet_tracks, talknet_scores = load_talknet(PYWORK_PATH)
+    talknet_tracks, talknet_scores = load_talknet(str(PYWORK_PATH))
 
     print("[3] Fusing TalkNet with ByteTrack...")
     frame_events = fuse_talknet_bytetrack(
@@ -212,8 +286,8 @@ def main():
     print("[4] Building speaker segments...")
     speaker_segments = build_segments(frame_events)
 
-    with open(OUTPUT_JSON, "w") as f:
-        json.dump(speaker_segments, f, indent=2)
+    with open(OUTPUT_JSON, "w", encoding="utf-8") as output_file:
+        json.dump(speaker_segments, output_file, indent=2)
 
     print(f"[DONE] Saved → {OUTPUT_JSON}")
 
